@@ -75,7 +75,6 @@ const avatarFallback = ({currentTarget}) => {
 function Avatar(props) {
     var src = props.src
 
-    console.log(props)
     return (
         <div className="avatar" data-tip={props['data-tip']}>
             <img className="avatarImg" src={src} onError={avatarFallback}/>
@@ -92,7 +91,6 @@ function TopRanker(props) {
         "3rd": "var(--bronze)"
     }[props.place]
     
-
     return (
         <div className="topRankerWrapper" id={props.id}>
             <div className={`topRanker id${id}`}>
@@ -207,7 +205,7 @@ function Leaderboard(props) {
                 </table>
             </div>
             <div id="bg">
-                <img id="bgImg" src='/bg.jpg'/>
+                <img id="bgImg" src='bg.jpg'/>
             </div>
             <ReactTooltip place="right" effect="solid" backgroundColor="var(--tool-tip-color)" offset={{left: -10}}/>
         </div>
@@ -216,7 +214,11 @@ function Leaderboard(props) {
 
 const debugging = false
 const App = () => {
-    const [LeaderboardData, setLeaderboardData] = React.useState(null)
+    const [LeaderboardData, setLeaderboardData] = React.useState(
+        _LeaderboardData.map(x => {
+            return [...x.slice(0, 5), "placeholderAvatar.png", ...x.slice(6)]
+        })
+    )
     const firstDeployed = React.useRef(true)
 
     if (firstDeployed.current) {
