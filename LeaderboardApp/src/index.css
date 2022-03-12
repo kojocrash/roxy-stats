@@ -1,0 +1,399 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+@font-face {
+    font-family: 'OpenSans';
+    src: url('../public/OpenSans.ttf');
+}
+
+@font-face {
+    font-family: 'Fredoka';
+    src: url('../public/Fredoka.ttf');
+}
+  
+:root {
+    --header-bg-color: rgb(0, 168, 232);
+    --header-color: #ffffff;
+    
+    --text-color: rgb(51, 51, 51);
+    --text-color-secondary: rgb(88, 88, 88);
+    --bg-color: #ffffff;
+
+    --white-row: rgb(254, 254, 254);
+    --grey-row: rgb(240, 240, 240);
+
+    --simulated-viewport-width: min(100vw, 600px);
+    --leaderboard-margin: min(50px, calc(0.13 * var(--simulated-viewport-width)));
+    --leaderboard-width: calc(var(--simulated-viewport-width) - var(--leaderboard-margin));
+    --leaderboard-offset: calc((100vw - var(--leaderboard-width))/2);
+    --header-width: max(
+        calc(var(--leaderboard-width) * 0.9), 
+        calc(var(--leaderboard-width) - 40px)
+    );
+    --header-height: calc(0.2 * var(--simulated-viewport-width));
+    --header-margin: calc((var(--leaderboard-width) - var(--header-width)) / 2);
+    
+    font-family: 'Montserrat', sans-serif;
+    color: var(--text-color);
+}
+
+:root {
+    --header-bg-color: rgb(62, 62, 62);
+    --header-color: #ffffff;
+    --separator: rgba(255, 255, 255, 0.23);
+
+    --text-color: #adadad;
+    --text-color-secondary: rgb(165, 165, 165);
+    --bg-color: #272727;
+
+    --tool-tip-color: #424242;
+    --pfp-border-color: rgb(81, 81, 81);
+    --pfp-border-color-secondary: rgb(48, 48, 48);
+    --pfp-border-inner-width: 3px;
+    --pfp-border-outer-width: 4.5px;
+
+    --white-row: #272727;
+    --grey-row: rgb(39, 39, 39);
+    --table-separator: rgba(255, 255, 255, 0.13);
+
+    --gold: #ffd800;
+    --silver: #d0d0d0;
+    --bronze: #a45c1b;
+
+    --simulated-viewport-width: min(100vw, 600px);
+    --leaderboard-margin: min(50px, calc(0.13 * var(--simulated-viewport-width)));
+    --leaderboard-width: calc(var(--simulated-viewport-width) - var(--leaderboard-margin));
+    --leaderboard-offset: calc((100vw - var(--leaderboard-width))/2);
+    --header-width: max(
+        calc(var(--leaderboard-width) * 0.9), 
+        calc(var(--leaderboard-width) - 40px)
+    );
+    --header-height: calc(0.18 * var(--simulated-viewport-width));
+    --header-margin: calc((var(--leaderboard-width) - var(--header-width)) / 2);
+    
+    font-family: 'Montserrat', sans-serif;
+    color: var(--text-color);
+}
+
+/* html {
+    background: url('../public/bg.jpg') no-repeat center center fixed;
+    background-size: cover;
+    -o-background-size: cover;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+} */
+
+/* #bg {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: -1;
+} */
+
+#bg {
+    position: fixed; 
+    top: -50%; 
+    left: -50%; 
+    width: 200%; 
+    height: 200%;
+    z-index: -1;
+}
+#bgImg {
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0; 
+    margin: auto; 
+    min-width: 50%;
+    min-height: 50%;
+    object-fit: cover;
+}
+
+/* #bgImg {
+    width: 100vw;
+    height: 100vw;
+    display: inline;
+    object-fit: cover;
+    z-index: -1;
+    position: fixed;
+    top: 0;
+    left: 0;
+} */
+
+body {
+    margin: 0;
+    margin-top: calc(var(--leaderboard-margin) / 2);
+    margin-bottom: calc(var(--leaderboard-margin) / 2);
+}
+
+#leaderboard {
+    position: relative;
+    width: var(--leaderboard-width);
+    left: var(--leaderboard-offset);
+    background-color: var(--bg-color);
+    border-radius: 10px;
+    box-sizing: border-box;
+    top: 0;
+}
+
+#titleArea {
+    width: 100%;
+    height: calc(0.45 * var(--header-height));
+    text-align: center;
+    position: relative;
+    z-index: 1;
+
+    background-color: var(--header-bg-color);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+#title {
+    color: var(--header-color);
+    line-height: calc(0.55 * var(--header-height));
+    font-size: 24px;
+    font-weight: 500;
+    margin: auto;
+}
+
+#searchArea {
+    width: 100%;
+    height: calc(0.4 * var(--header-height));
+    position: sticky;
+    z-index: 10;
+    top: 0;
+    
+    background-color: var(--header-bg-color);
+    padding: 1%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+#searchSpacer {
+    width: 100%;
+    position: relative;
+    height: calc(0.05 * var(--header-height));
+    background-color: var(--header-bg-color);
+}
+
+#searchWrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#searchWrapper .kQUOEA {
+    height: calc(0.2981 * var(--header-height));
+}
+
+#rankings {
+    width: 100%;
+    border-top: 1px solid var(--separator);
+}
+
+#top3 {
+    width: 100%;
+    height: calc(0.4 * var(--simulated-viewport-width));
+    position: relative;
+
+}
+
+.topRankerWrapper {
+    position: absolute;
+    bottom: 6%;
+    width: 24%;
+}
+
+#firstPlace {
+    left: 36.5%;
+    width: 27%;
+}
+
+#secondPlace {
+    left: 7%;
+}
+
+#thirdPlace {
+    right: 7%;
+}
+
+.topRanker {
+    padding-top: 150%;
+    text-align: center;
+    position: relative;
+}
+
+.topRankLabelWrapper {
+    position: absolute;
+    width: 100%;
+    height: 18.5%;
+    top: 0;
+}
+
+.topRankLabel {
+    line-height: calc(0.060421 * var(--simulated-viewport-width));
+    margin: auto;
+
+    color: var(--text-color);
+    font-family: 'OpenSans';
+    font-size: 26px;
+
+}
+
+#firstPlace .topRankLabel {
+    line-height: calc(0.06868125 * var(--simulated-viewport-width));
+}
+
+.topRankAvatarContainer {
+    position: absolute;
+    box-sizing: border-box;
+    font-family: 'Fredoka';
+    border-radius: 50%;
+    color: var(--text-color-secondary);
+    width: 80%;
+    left: 10%;
+    top: 20%;
+}
+
+.topRankName {
+    position: absolute;
+    width: 100%;
+    line-height: 20%;
+    color: inherit;
+    font-weight: 500;
+    top: 100%;
+}
+
+.topRankDays {
+    position: absolute;
+    width: 100%;
+    line-height: 15%;
+    color: inherit;
+    font-weight: 500;
+    top: 117%;
+}
+.avatar {
+    padding-top: 100%;
+}
+
+.avatarImg {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+}
+
+#header {
+    height: calc(0.07 * var(--simulated-viewport-width));
+    border-bottom: 1px solid var(--separator);
+    background-color: var(--header-bg-color);
+}
+
+.headerLabel {
+    font-weight: 500;
+    color: var(--text-color-secondary);
+}
+
+#rankHeader {
+    width: 13%;
+}
+
+#avatarHeader {
+    width: 15%;
+    color: rgba(0, 0, 0, 0) !important;
+}
+
+#nameHeader {
+    width: 49%;
+    text-align: left;
+    padding-left: 2.5%;
+}
+
+#daysHeader {
+    width: 23%;
+}
+
+#followers {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.followerRow {
+    position: relative;
+    width: 100%;
+    height: 84px;
+    border-bottom: 1px solid var(--table-separator);
+} 
+
+.followerRow:last-child td:first-child { border-bottom-left-radius: 10px; }
+.followerRow:last-child td:last-child { border-bottom-right-radius: 10px; }
+
+.followerRow.rowA {
+    background-color: var(--white-row);
+}
+
+.followerRow.rowB {
+    background-color: var(--grey-row);
+}
+
+.followerRank {
+    font-size: 25px;
+    text-align: center;
+}
+
+.followerDays {
+    font-size: 22px;
+    font-weight: 500;
+    margin: auto;
+    text-align: right;
+    padding-right: 3%;
+}
+
+.followerDays .daysUnit {
+    font-size: 16px;
+    font-weight: 300;
+
+}
+
+.followerName {
+    font-size: 20px;
+    padding-left: 2.5%;
+}
+
+.followerAvatar {
+    position: relative;
+    padding: 2%;
+}
+
+.followerAvatar .avatar {
+    position: relative;
+    border-radius: 50%;
+    text-align: center;
+}
+
+.outlineOuter {
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+}
+
+.outlineInner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+}
+
+
