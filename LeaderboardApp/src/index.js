@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import ReactTooltip from 'react-tooltip';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete'
 import placeholderLeaderboard from "../public/PlaceholderLeaderboard.json";
-import _LeaderboardData from "../public/Year1Leaderboard.json";
+import _LeaderboardData from "../public/Year2Leaderboard.json";
 import "./index.css"
 
 function Outline(props) {
@@ -157,7 +157,7 @@ function Leaderboard(props) {
         <div id="leaderboard">
             <div id="titleArea">
                 <h1 id="title">
-                    Year 1 Leaderboard
+                    Year 1 Summary
                 </h1>
             </div>
             <div id="searchArea">
