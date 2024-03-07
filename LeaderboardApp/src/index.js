@@ -174,6 +174,12 @@ function getRange(count) {
     return Array.from({ length: count }, (_, i) => i);
 }
 
+function shiftDate(date, numDays) {
+    const newDate = new Date(date);
+    newDate.setDate(newDate.getDate() + numDays);
+    return newDate;
+}
+
 function Leaderboard(props) {
     const [activityBinary, setActivityBinary] = React.useState(-1); // -1 = hidden;
 
@@ -186,6 +192,7 @@ function Leaderboard(props) {
     var ranking = data.slice(3)
 
     const bigInt1 = BigInt(1)
+    const startDate = new Date(2023, 0, 1)
 
     var i = 3
     return (
@@ -251,32 +258,39 @@ function Leaderboard(props) {
                 ariaHideApp={false}
             >
                 {activityBinary >= 0 && 
-                    <CalendarHeatmap
-                        numDays={365}
-                        endDate={new Date(2023, 0, 365)}
-                        values={getRange(365).map(index => {
-                            return {
-                                date: new Date(2023, 0, index+1),
-                                day: index+1,
-                                count: (activityBinary & bigInt1 << BigInt(index)) != 0 ? 1 : 0,
-                            }
+                    <div className="react-calendar-heatmap">
+                        {getRange(365).map(index => {
+                            let fill_color = (activityBinary & bigInt1 << BigInt(index)) != 0 ? 'color-filled' : 'color-empty'
+                            return <div className={`square ${fill_color}`} data-tip={`Day ${index+1}`} key={index}></div>
                         })}
-                        classForValue={value => {
-                            if (!value) {
-                                return 'color-empty';
-                            }
-                            return value.count ? 'color-filled' : 'color-empty'
-                        }}
-                        showWeekdayLabels={false}
-                        showMonthLabels={false}
-                        tooltipDataAttrs={value => {
-                            return {
-                            'data-tip': `Day ${value.day}`,
-                            };
-                        }}
-                        titleForValue={value => `Day ${value.day}`}
-                        gutterSize={2}
-                    />
+                    </div>
+                    // TODO: UNINSTALL THIS PIECE OF GARBO
+                    // <CalendarHeatmap
+                    //     numDays={365}
+                    //     endDate={shiftDate(startDate, 364)}
+                    //     values={getRange(365).map(index => {
+                    //         return {
+                    //             date: shiftDate(startDate, index),
+                    //             day: index+1,
+                    //             count: (activityBinary & bigInt1 << BigInt(index)) != 0 ? 1 : 0,
+                    //         }
+                    //     })}
+                    //     classForValue={value => {
+                    //         if (!value) {
+                    //             return 'color-empty';
+                    //         }
+                    //         return value.count ? 'color-filled' : 'color-empty'
+                    //     }}
+                    //     showWeekdayLabels={false}
+                    //     showMonthLabels={false}
+                    //     tooltipDataAttrs={value => {
+                    //         return {
+                    //         'data-tip': value ? `Day ${value.day}` : `Day undefined`,
+                    //         };
+                    //     }}
+                    //     titleForValue={value => value ? `Day ${value.day}` : ''}
+                    //     gutterSize={2}
+                    // />
                 }
                 {activityBinary >= 0 && 
                     <ReactTooltip />
@@ -286,7 +300,7 @@ function Leaderboard(props) {
     )
 }
 
-const debugging = false
+const debugging = true
 const App = () => {
     const [LeaderboardData, setLeaderboardData] = React.useState(
         _LeaderboardData.map(x => {

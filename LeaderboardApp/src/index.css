@@ -72,6 +72,11 @@
     
     --ranking-border-radius: 10px;
 
+    --activity-grid-width: min(calc(100vw - 120px), 1000px);
+    --activity-grid-gap: min(4px, calc(0.005 * var(--activity-grid-width)));
+    --activity-square-width: calc((var(--activity-grid-width) - var(--activity-grid-gap)*52)/53);
+    --activity-grid-height: calc(var(--activity-square-width)*7 + var(--activity-grid-gap)*6 + 1px);
+
     font-family: 'Montserrat', sans-serif;
     color: var(--text-color);
 }
@@ -440,9 +445,7 @@ body {
     top: 50%;
     transform: translate(-50%, -50%);
 
-    width: calc(100vw - 120px);
-    max-width: 1000px;
-    
+    width: var(--activity-grid-width);
     padding: 20px;
 }
 
@@ -464,40 +467,27 @@ body {
     z-index: 69;
 }
 
-
-/*
- * react-calendar-heatmap styles
- *
- * All of the styles in this file are optional and configurable!
- * The github and gitlab color scales are provided for reference.
- */
 .react-calendar-heatmap {
-    width: 100%;
+    width: var(--activity-grid-width);
+    height: var(--activity-grid-height);
+    gap: var(--activity-grid-gap);
+    
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
 }
 
-
-.react-calendar-heatmap text {
-    font-size: 10px;
-    fill: #aaa;
+.react-calendar-heatmap .square {
+    width: var(--activity-square-width);
+    height: var(--activity-square-width);
+    cursor: pointer;
+    box-sizing: content-box;
 }
-
-.react-calendar-heatmap .react-calendar-heatmap-small-text {
-    font-size: 5px;
-}
-
-.react-calendar-heatmap rect:hover {
-    stroke: #555;
-    stroke-width: 1px;
-}
-
-/*
-* Default color scale
-*/
 
 .react-calendar-heatmap .color-empty {
-    fill: #434343;
+    background-color: #434343;
 }
 
 .react-calendar-heatmap .color-filled {
-    fill: #65a4c6;
+    background-color: #65a4c6;
 }
