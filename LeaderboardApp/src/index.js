@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactTooltip from 'react-tooltip';
+import ReactModal from 'react-modal';
+import CalendarHeatmap from 'react-calendar-heatmap';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete'
 import placeholderLeaderboard from "../public/PlaceholderLeaderboard.json";
-import _LeaderboardData from "../public/Year2Leaderboard.json";
+import _LeaderboardData from "../public/Year3Leaderboard.json";
 import "./index.css"
 
 function Outline(props) {
@@ -12,6 +14,7 @@ function Outline(props) {
     var outerColor = props.outer     
     var outerWidth = props.outerWidth
     var contain    = props.contain
+    var shouldGlow = props.glow
 
     var innerStyle = (innerColor && innerWidth) ? {
         border: `${innerWidth} solid`,
@@ -28,6 +31,10 @@ function Outline(props) {
         outerStyle.boxSizing = "border-box"
         innerStyle.zIndex = 2
         outerStyle.zIndex = 2
+    }
+
+    if (shouldGlow && outerColor) {
+        innerStyle.boxShadow = "0px 0 20px 8px " + outerColor
     }
 
     return (
@@ -84,23 +91,34 @@ function Avatar(props) {
 }
 
 function TopRanker(props) {
-    var [rank, id, name, tag, days, avatar] = props.data
-    var rankColor = {
-        "1st": "var(--gold)",
-        "2nd": "var(--silver)",
-        "3rd": "var(--bronze)"
-    }[props.place]
+    var [rank, id, name, tag, days, avatar, activity_binary] = props.data
     
+    var rankColor = {
+        "1": "var(--gold)",
+        "2": "var(--silver)",
+        "3": "var(--bronze)"
+    }[rank.toString()]
+
+    var rankPos = {
+        "1": "1st",
+        "2": "2nd",
+        "3": "3rd"
+    }[rank.toString()]
+    
+    function displayActivity() {
+        props.activityStatsSetter(BigInt(activity_binary))
+    }
+
     return (
         <div className="topRankerWrapper" id={props.id}>
             <div className={`topRanker id${id}`}>
-                <div className="topRankLabelWrapper"><h2 className="topRankLabel" style={{ color: `${rankColor}` }}>{props.place}</h2></div>
+                <div className="topRankLabelWrapper"><h2 className="topRankLabel" style={{ color: `${rankColor}` }}>{rankPos}</h2></div>
                 <div className="topRankAvatarContainer">
-                    <Avatar src={avatar} data-tip={name+tag}>
-                        <Outline outer={`${rankColor}`} outerWidth={"calc(0.01 * var(--simulated-viewport-width))"}/>{/* inner={`#fff`} innerWidth={"calc(0.004 * var(--simulated-viewport-width))"} */}
+                    <Avatar src={avatar} data-tip={tag}>
+                        <Outline glow outer={`${rankColor}`} outerWidth={"calc(0.01 * var(--simulated-viewport-width))"}/>{/* inner={`#fff`} innerWidth={"calc(0.004 * var(--simulated-viewport-width))"} */}
                     </Avatar>
                     <h3 className="topRankName" style={{ color: `${rankColor}` }}>{name}</h3>
-                    <h4 className="topRankDays" style={{ color: `${rankColor}` }}>{days} Days</h4>
+                    <h4 className="topRankDays" style={{ color: `${rankColor}` }}><a title="Show details" onClick={displayActivity}>{days} Days</a></h4>
                 </div>
             </div>
         </div>
@@ -112,30 +130,35 @@ function Top3(props) {
 
     return (
         <div id="top3">
-            <TopRanker id="firstPlace" data={data[0]} place={"1st"}/>
-            <TopRanker id="secondPlace" data={data[1]} place={"2nd"}/>
-            <TopRanker id="thirdPlace" data={data[2]} place={"3rd"}/>
+            <TopRanker id="firstPlace" data={data[0]}  activityStatsSetter={props.activityStatsSetter}/>
+            <TopRanker id="secondPlace" data={data[1]} activityStatsSetter={props.activityStatsSetter}/>
+            <TopRanker id="thirdPlace" data={data[2]}  activityStatsSetter={props.activityStatsSetter}/>
         </div>
     )
 }
 
 const disableAvatars = false
 function Follower(props) {
-    var [rank, id, name, tag, days, avatar] = props.data
+    var [rank, id, name, tag, days, avatar, activity_binary] = props.data
     var index = props.index
     var rowType = index%2 == 0 ? "A" : "B"
     var dayText = days != 1 ? "days" : "day"
+    
+    function displayActivity() {
+        let bin = BigInt(activity_binary)
+        props.activityStatsSetter(bin)
+    }
 
     return (
         <tr id={"follower"+rank} className={`followerRow row${rowType} id${id}`}>
             <td className="followerRank">{String(rank).padStart(2, '0')}</td>
             <td className="followerAvatar">
-                <Avatar src={disableAvatars ? "placeholderAvatar.png" : avatar} data-tip={name+tag}>
+                <Avatar src={disableAvatars ? "placeholderAvatar.png" : avatar} data-tip={tag}>
                     <Outline inner="var(--pfp-border-color-secondary)" innerWidth={"var(--pfp-border-inner-width)"} outer="var(--pfp-border-color)" outerWidth={"var(--pfp-border-outer-width)"} contain={false}/>
                 </Avatar>
             </td>
             <td className="followerName">{name}</td>
-            <td className="followerDays">{days}<span className="daysUnit"> {dayText}</span></td>
+            <td className="followerDays"><a title="Show details" onClick={displayActivity}>{days}<span className="daysUnit"> {dayText}</span></a></td>
         </tr>
     )
 }
@@ -147,17 +170,29 @@ const handleOnSelect = (item) => {
     scrollTo(y, 1000)
 }
 
+function getRange(count) {
+    return Array.from({ length: count }, (_, i) => i);
+}
+
 function Leaderboard(props) {
+    const [activityBinary, setActivityBinary] = React.useState(-1); // -1 = hidden;
+
+    function closeActivityModal() {
+        setActivityBinary(-1)
+    }
+
     var data = props.data || placeholderLeaderboard
     var top3 = data.slice(0, 3)
     var ranking = data.slice(3)
+
+    const bigInt1 = BigInt(1)
 
     var i = 3
     return (
         <div id="leaderboard">
             <div id="titleArea">
                 <h1 id="title">
-                    Year 1 Summary
+                    Year 3 Summary
                 </h1>
             </div>
             <div id="searchArea">
@@ -176,10 +211,11 @@ function Leaderboard(props) {
                             border: "unset",
                             fontFamily: "inherit",
                             color: "var(--text-color)",
-                            backgroundColor: "var(--bg-color)",
+                            backgroundColor: "var(--header-bg-color)",
                             boxShadow: "rgb(0, 0, 0, 0.6) 0px 1px 15px 0px",
                             hoverBackgroundColor: "rgba(255, 255, 255, 0.1)",
                             lineColor: "var(--separator)",
+                            backdropFilter: "blur(4px)",
                             zIndex: 4 
                         }}
                         
@@ -188,7 +224,7 @@ function Leaderboard(props) {
             </div>
             <div id="searchSpacer"/>
             <div id="rankings">
-                <Top3 data={top3}/>
+                <Top3 data={top3} activityStatsSetter={setActivityBinary}/>
                 <table id="followers">
                     <tbody>
                         <tr id="header">
@@ -199,15 +235,53 @@ function Leaderboard(props) {
                         </tr>
                         {ranking.map(x => {
                             i += 1
-                            return <Follower data={x} index={i} key={i}/>
+                            return <Follower data={x} index={i} key={i} activityStatsSetter={setActivityBinary}/>
                         })}
                     </tbody>
                 </table>
             </div>
-            <div id="bg">
-                <img id="bgImg" src='bg.jpg'/>
-            </div>
+            
             <ReactTooltip place="right" effect="solid" backgroundColor="var(--tool-tip-color)" offset={{left: -10}}/>
+            <ReactModal 
+                className="activityModal"
+                overlayClassName="activityModalOverlay"
+                isOpen={activityBinary != -1}
+                onRequestClose={closeActivityModal}
+                contentLabel="Activity Modal"
+                ariaHideApp={false}
+            >
+                {activityBinary >= 0 && 
+                    <CalendarHeatmap
+                        numDays={365}
+                        endDate={new Date(2023, 0, 365)}
+                        values={getRange(365).map(index => {
+                            return {
+                                date: new Date(2023, 0, index+1),
+                                day: index+1,
+                                count: (activityBinary & bigInt1 << BigInt(index)) != 0 ? 1 : 0,
+                            }
+                        })}
+                        classForValue={value => {
+                            if (!value) {
+                                return 'color-empty';
+                            }
+                            return value.count ? 'color-filled' : 'color-empty'
+                        }}
+                        showWeekdayLabels={false}
+                        showMonthLabels={false}
+                        tooltipDataAttrs={value => {
+                            return {
+                            'data-tip': `Day ${value.day}`,
+                            };
+                        }}
+                        titleForValue={value => `Day ${value.day}`}
+                        gutterSize={2}
+                    />
+                }
+                {activityBinary >= 0 && 
+                    <ReactTooltip />
+                }
+            </ReactModal>
         </div>
     )
 }
@@ -219,6 +293,7 @@ const App = () => {
             return [...x.slice(0, 5), "placeholderAvatar.png", ...x.slice(6)]
         })
     )
+    
     const firstDeployed = React.useRef(true)
 
     if (firstDeployed.current) {
@@ -245,4 +320,5 @@ const App = () => {
     return <Leaderboard data={LeaderboardData}/>;
 }
 
+// ReactModal.setAppElement("#app")
 ReactDOM.render(<App/>, document.getElementById('app'));

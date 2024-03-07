@@ -37,7 +37,7 @@
 }
 
 :root {
-    --header-bg-color: rgb(62, 62, 62);
+    --header-bg-color: rgba(0, 0, 0, 0.6);
     --header-color: #ffffff;
     --separator: rgba(255, 255, 255, 0.23);
 
@@ -51,9 +51,9 @@
     --pfp-border-inner-width: 3px;
     --pfp-border-outer-width: 4.5px;
 
-    --white-row: #272727;
-    --grey-row: rgb(39, 39, 39);
-    --table-separator: rgba(255, 255, 255, 0.13);
+    --white-row: unset;
+    --grey-row: rgba(0,0,0,0.3);
+    --table-separator: rgba(255, 255, 255, 0.05);
 
     --gold: #ffd800;
     --silver: #d0d0d0;
@@ -70,6 +70,8 @@
     --header-height: calc(0.18 * var(--simulated-viewport-width));
     --header-margin: calc((var(--leaderboard-width) - var(--header-width)) / 2);
     
+    --ranking-border-radius: 10px;
+
     font-family: 'Montserrat', sans-serif;
     color: var(--text-color);
 }
@@ -91,7 +93,15 @@
     z-index: -1;
 } */
 
-#bg {
+#bgImg {
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+}
+/* #bg {
     position: fixed; 
     top: -50%; 
     left: -50%; 
@@ -109,7 +119,7 @@
     min-width: 50%;
     min-height: 50%;
     object-fit: cover;
-}
+} */
 
 /* #bgImg {
     width: 100vw;
@@ -132,10 +142,10 @@ body {
     position: relative;
     width: var(--leaderboard-width);
     left: var(--leaderboard-offset);
-    background-color: var(--bg-color);
     border-radius: 10px;
     box-sizing: border-box;
     top: 0;
+    box-shadow: 0px 0px 14px 0px #000000;
 }
 
 #titleArea {
@@ -146,6 +156,9 @@ body {
     z-index: 1;
 
     background-color: var(--header-bg-color);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
@@ -166,6 +179,8 @@ body {
     top: 0;
     
     background-color: var(--header-bg-color);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     padding: 1%;
     box-sizing: border-box;
     text-align: center;
@@ -176,6 +191,9 @@ body {
     position: relative;
     height: calc(0.05 * var(--header-height));
     background-color: var(--header-bg-color);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    box-shadow: 0px 4px 6px 0px rgb(0 0 0 / 54%);
 }
 
 #searchWrapper {
@@ -190,7 +208,7 @@ body {
 
 #rankings {
     width: 100%;
-    border-top: 1px solid var(--separator);
+    background-color: var(--header-bg-color);
 }
 
 #top3 {
@@ -273,7 +291,13 @@ body {
     color: inherit;
     font-weight: 500;
     top: 117%;
+    cursor: pointer;
 }
+
+.topRankDays:hover {
+    text-decoration: underline;
+}
+
 .avatar {
     padding-top: 100%;
 }
@@ -290,8 +314,7 @@ body {
 
 #header {
     height: calc(0.07 * var(--simulated-viewport-width));
-    border-bottom: 1px solid var(--separator);
-    background-color: var(--header-bg-color);
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .headerLabel {
@@ -301,6 +324,7 @@ body {
 
 #rankHeader {
     width: 13%;
+    border-top-left-radius: var(--ranking-border-radius);
 }
 
 #avatarHeader {
@@ -316,11 +340,14 @@ body {
 
 #daysHeader {
     width: 23%;
+    border-top-right-radius: var(--ranking-border-radius);
 }
 
 #followers {
     width: 100%;
     border-collapse: collapse;
+    border-radius: var(--ranking-border-radius);
+    box-shadow: inset 0px -6px 10px 8px rgb(0 0 0 / 54%);
 }
 
 .followerRow {
@@ -352,12 +379,17 @@ body {
     margin: auto;
     text-align: right;
     padding-right: 3%;
+    cursor: pointer;
+}
+
+.followerDays:hover {
+    text-decoration: underline;
 }
 
 .followerDays .daysUnit {
     font-size: 16px;
     font-weight: 300;
-
+    position: relative;
 }
 
 .followerName {
@@ -396,4 +428,76 @@ body {
     top: 50%;
 }
 
+.activityModal {
+    position: absolute;
+    display: flex;
+    background-color: rgba(12, 12, 12, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 10px;
 
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    width: calc(100vw - 120px);
+    max-width: 1000px;
+    
+    padding: 20px;
+}
+
+.activityModal:focus {
+    outline:none !important;
+    outline-width: 0 !important;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+}
+
+.activityModalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 69;
+}
+
+
+/*
+ * react-calendar-heatmap styles
+ *
+ * All of the styles in this file are optional and configurable!
+ * The github and gitlab color scales are provided for reference.
+ */
+.react-calendar-heatmap {
+    width: 100%;
+}
+
+
+.react-calendar-heatmap text {
+    font-size: 10px;
+    fill: #aaa;
+}
+
+.react-calendar-heatmap .react-calendar-heatmap-small-text {
+    font-size: 5px;
+}
+
+.react-calendar-heatmap rect:hover {
+    stroke: #555;
+    stroke-width: 1px;
+}
+
+/*
+* Default color scale
+*/
+
+.react-calendar-heatmap .color-empty {
+    fill: #434343;
+}
+
+.react-calendar-heatmap .color-filled {
+    fill: #65a4c6;
+}
