@@ -300,7 +300,7 @@ function Leaderboard(props) {
     )
 }
 
-const debugging = true
+const debugging = false
 const App = () => {
     const [LeaderboardData, setLeaderboardData] = React.useState(
         _LeaderboardData.map(x => {
