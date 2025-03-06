@@ -314,7 +314,7 @@ const App = () => {
         firstDeployed.current = false
 
         if (!debugging) {
-	        fetch("https://script.google.com/macros/s/AKfycbzgPqy7Oid90XNlLkcTwzCvLTFhZ1ADMEOoIr1OhqZLMGtNgXJS0dMZbrU2jvIxvxh9/exec").then(res => {
+	        fetch("https://script.google.com/macros/s/AKfycbym96Ps9YojfFqiTf3SsPid1koHeBWBsiRGSXbSnGZhB4NmXFyNYhDK4bQclSqcOeEF/exec").then(res => {
 	            if (res.status != 200) throw 'Bad Request / Internal Server Error'
 	
 	            res.json().then(data => {
