@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactTooltip from 'react-tooltip';
 import ReactModal from 'react-modal';
+import Toggle from 'react-toggle';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete'
 import placeholderLeaderboard from "../public/PlaceholderLeaderboard.json";
@@ -182,9 +183,14 @@ function shiftDate(date, numDays) {
 
 function Leaderboard(props) {
     const [activityBinary, setActivityBinary] = React.useState(-1); // -1 = hidden;
+    const [showDate, setShowDateFlag] = React.useState(false);
 
     function closeActivityModal() {
         setActivityBinary(-1)
+    }
+
+    function toggleShowDate(e) {
+        setShowDateFlag(e.target.checked);
     }
 
     var data = props.data || placeholderLeaderboard
@@ -192,7 +198,7 @@ function Leaderboard(props) {
     var ranking = data.slice(3)
 
     const bigInt1 = BigInt(1)
-    const startDate = new Date(2023, 0, 1)
+    const startDate = new Date(1678206690140) // TODO: find a non-hardcoded method
 
     var i = 3
     return (
@@ -260,10 +266,24 @@ function Leaderboard(props) {
                 {activityBinary >= 0 && 
                     <div className="react-calendar-heatmap">
                         {getRange(365).map(index => {
-                            let fill_color = (activityBinary & bigInt1 << BigInt(index)) != 0 ? 'color-filled' : 'color-empty'
-                            return <div className={`square ${fill_color}`} data-tip={`Day ${index+1}`} key={index}></div>
+                            let fill_color = (activityBinary & bigInt1 << BigInt(index)) != 0 ? 'color-filled' : 'color-empty';
+                            let tooltipText = `Day ${index+1}`;
+                            if (showDate) {
+                                let curDate = new Date(startDate.getTime());
+                                curDate.setDate(curDate.getDate() + index); 
+                                tooltipText = curDate.toLocaleString(navigator.language ?? 'en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+                            }
+                            return <div className={`square ${fill_color}`} data-tip={tooltipText} key={index}></div>
                         })}
+                        <label id="show-date-toggle">
+                            <Toggle
+                                icons={false}
+                                checked={showDate}
+                                onChange={toggleShowDate} />
+                            <span>Show date</span>
+                        </label>
                     </div>
+                    
                     // TODO: UNINSTALL THIS PIECE OF GARBO
                     // <CalendarHeatmap
                     //     numDays={365}
