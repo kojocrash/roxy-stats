@@ -6,7 +6,7 @@ import Toggle from 'react-toggle';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete'
 import placeholderLeaderboard from "../public/PlaceholderLeaderboard.json";
-import _LeaderboardData from "../public/Year3Leaderboard.json";
+import _LeaderboardData from "../public/Year4Leaderboard.json";
 import "./index.css"
 
 function Outline(props) {
@@ -198,14 +198,14 @@ function Leaderboard(props) {
     var ranking = data.slice(3)
 
     const bigInt1 = BigInt(1)
-    const startDate = new Date(1678206690140) // TODO: find a non-hardcoded method
+    const startDate = new Date(1709757880631) // TODO: find a non-hardcoded method
 
     var i = 3
     return (
         <div id="leaderboard">
             <div id="titleArea">
                 <h1 id="title">
-                    Year 3 Summary
+                    Year 4 Summary
                 </h1>
             </div>
             <div id="searchArea">
@@ -334,7 +334,7 @@ const App = () => {
         firstDeployed.current = false
 
         if (!debugging) {
-	        fetch("https://script.google.com/macros/s/AKfycbym96Ps9YojfFqiTf3SsPid1koHeBWBsiRGSXbSnGZhB4NmXFyNYhDK4bQclSqcOeEF/exec").then(res => {
+	        fetch("https://script.google.com/macros/s/AKfycbz5lQGyTmhZ4KZFNnK21FoQWBmfi7kB7cocTuPz2QAq0edQkS7JNB2CCUpznxnxxHl2/exec").then(res => {
 	            if (res.status != 200) throw 'Bad Request / Internal Server Error'
 	
 	            res.json().then(data => {
